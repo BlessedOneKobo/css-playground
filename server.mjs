@@ -1,5 +1,5 @@
+import { readFile, watch } from "node:fs/promises";
 import { createServer } from "node:http";
-import { watch, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { WebSocketServer } from "ws";
 
@@ -15,11 +15,11 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(3000, "127.0.0.1", () => {
-  console.log("server: Listening on 127.0.0.1:3000");
+server.listen(8000, "127.0.0.1", () => {
+  console.log("server: Listening on 127.0.0.1:8000");
 });
 
-const wss = new WebSocketServer({ port: 6969 })
+const wss = new WebSocketServer({ port: 8000 })
 wss.on("connection", async (ws) => {
   console.log("wss://connected");
   try {
@@ -28,7 +28,7 @@ wss.on("connection", async (ws) => {
       if (event.eventType === "change") {
         console.log("server: restarting...")
         server.close(() => {
-          server.listen(3000, "127.0.0.1", () => {
+          server.listen(8000, "127.0.0.1", () => {
             console.log("server: Restarted ✅");
             ws.send("change")
           });
