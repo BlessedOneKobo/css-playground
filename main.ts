@@ -9,13 +9,17 @@ Deno.serve(async (req: Request) => {
 	if (req.headers.get("upgrade") === "websocket") {
 		const { socket, response } = Deno.upgradeWebSocket(req);
 		socket.onopen = async () => {
-			const watcher = Deno.watchFs("index.html");
+			const watcher = Deno.watchFs([
+				"index.html",
+				"client.js",
+				"dark.css",
+			]);
 			for await (const event of watcher) {
 				if (event.kind === "modify") {
 					console.log("server: restarting...");
+					console.log("server: Restarted ✅");
 					watcher.close();
 					socket.send("reload");
-					console.log("server: Restarted ✅");
 				}
 			}
 		};
